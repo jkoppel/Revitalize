@@ -2,21 +2,23 @@
 module Seance
   module Import
 
-    def parse_sig(sig)
-      re = /^(.+) (__thiscall|__stdcall|__cdecl|__fastcall) ([\w:]+)\((.+)\)$/
+    def self.parse_sig(sig)
+      sig = sig.strip
+      re = /^(.+)(__thiscall|__stdcall|__cdecl|__fastcall) ([\w:]+)\((.+)\)$/
       md = re.match(sig)
       
       if md.nil?
+        p sig
         raise "Function signature did not correspond to expected format"
       else
-        {:type => md[1],
+        {:type => md[1].strip,
           :convention => md[2],
           :name => md[3],
           :args => md[4]}
       end
     end
 
-    def import_func(filnam, root)
+    def self.import_func(filnam, root)
       f = File.open(filnam, "r")
       sig = f.readline
       body = f.readlines.join

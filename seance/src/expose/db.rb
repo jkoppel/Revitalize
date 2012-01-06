@@ -66,7 +66,7 @@ module Seance
       end
 
       def initialize(root)
-        @root = Directory.func_import_dir(root)
+        @root = Directory.func_expose_dir(root)
         @meta = MetaInf.new(@root)
         @meta.ensure_file(SIG_FILE, {})
         @sigs = @meta.load(SIG_FILE)
@@ -81,9 +81,9 @@ module Seance
       end
 
       def add_func(type, name, convention, args, body)
-        dump_raw(self.class.name_to_filename(name), body)
+        dump_raw(body, self.class.name_to_filename(name))
         @sigs[name] = {TYPE => type, CONVENTION => convention, ARGS => args}
-        @meta.dump(SIG_FILE, @sigs)
+        @meta.dump(@sigs, SIG_FILE)
       end
     end
 

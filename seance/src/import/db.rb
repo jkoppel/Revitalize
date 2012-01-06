@@ -47,12 +47,12 @@ module Seance
       def batch_add_type(sc, name, content)
         @types << name
         @scs[name] = sc
-        dump_raw(self.class.name_to_filename(name), content)
+        dump_raw(content, self.class.name_to_filename(name))
       end
 
       def end_batch_add
-        @meta.dump(SC_FILE, @scs)
-        @meta.dump(LIST_FILE, @types)
+        @meta.dump(@scs, SC_FILE)
+        @meta.dump(@types, LIST_FILE)
       end
 
     end
@@ -88,17 +88,21 @@ module Seance
       end
 
       def add_func(type, name, convention, args, body)
-        dump_raw(self.class.name_to_filename(name), body)
+        dump_raw(body, self.class.name_to_filename(name))
         @sigs[name] = {TYPE => type, CONVENTION => convention, ARGS => args}
-        @meta.dump(SIG_FILE, @sigs)
+        @meta.dump(@sigs, SIG_FILE)
       end
 
       def get_func_type(name)
-        @sigs[TYPE]
+        @sigs[name][TYPE]
       end
 
       def get_func_convention(name)
-        @sigs[CONVENTION]
+        @sigs[name][CONVENTION]
+      end
+
+      def get_func_args(name)
+        @sigs[name][ARGS]
       end
 
       def get_func_body(name)

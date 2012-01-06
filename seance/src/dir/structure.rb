@@ -38,6 +38,10 @@ module Seance
       "#{root}/#{IMPORTS_FUNCS_DIR}"
     end
 
+    def self.func_expose_dir(root)
+      "#{root}/#{TRANS_FUNCS_DIR}"
+    end
+
     def self.imports_dir(root)
       "#{root}/#{IMPORTS_DIR}"
     end
