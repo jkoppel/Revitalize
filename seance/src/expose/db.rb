@@ -80,6 +80,11 @@ module Seance
         load_raw(self.class.name_to_filename(nam))
       end
 
+      def get_func_def(nam)
+        meta = @sigs[nam]
+        "#{meta[TYPE]} #{meta[CONVENTION]} #{nam}(#{meta[ARGS]})\n#{get_func_body(nam)}"
+      end
+
       def add_func(type, name, convention, args, body)
         dump_raw(body, self.class.name_to_filename(name))
         @sigs[name] = {TYPE => type, CONVENTION => convention, ARGS => args}
