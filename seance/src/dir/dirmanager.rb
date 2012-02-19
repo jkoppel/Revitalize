@@ -1,15 +1,17 @@
 ####Given a "root" function, provides utilities for managing files
 ####in the root directory
 
+require 'dir/ops.rb'
+
 require 'yaml'
 
 module DirManager
     def ensure_dir(dir="")
-      Dir.mkdir(path(dir)) unless File.exists?(path(dir))
+      DirOps.ensure_dir(path(dir))
     end
 
     def path(filname)
-      "#{root}/#{filname}"
+      DirOps.file_in(root,filname)
     end
     
     def dump(obj, filname)

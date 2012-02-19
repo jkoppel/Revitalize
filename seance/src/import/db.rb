@@ -3,6 +3,7 @@ require 'set'
 require "dir/metainf.rb"
 require 'dir/dirmanager.rb'
 require 'dir/structure.rb'
+require 'syntax/cpp.rb'
 
 module Seance
   module Import
@@ -68,6 +69,22 @@ module Seance
       CONVENTION = :convention
       ARGS = :args
 
+      #Should eventually be converted to use SafeMe
+      def check_arg_structure(args)
+        valid = true
+        valid &&= args.class == Array
+        
+        args.each do |a|
+          valid &&= a.class == Array 
+          valid &&= a.size == 2
+          a.each do |s|
+            valid &&= s.class == String
+          end
+        end
+
+        raise "Imported function arguments in invalid form" unless valid
+      end
+
       def self.name_to_filename(nam)
         (nam.gsub(':','_'))+".cpp"
       end
@@ -88,6 +105,7 @@ module Seance
       end
 
       def add_func(type, name, convention, args, body)
+        check_arg_structure args
         dump_raw(body, self.class.name_to_filename(name))
         @sigs[name] = {TYPE => type, CONVENTION => convention, ARGS => args}
         @meta.dump(@sigs, SIG_FILE)
@@ -103,6 +121,32 @@ module Seance
 
       def get_func_args(name)
         @sigs[name][ARGS]
+      end
+
+      def get_fn_list
+        @sigs.keys
+      end
+
+      def get_stack_arg_names(methnam)
+        meta = @sigs[methnam]
+
+        args = nil
+
+        case meta[CONVENTION]
+        when THISCALL
+          args = meta[ARGS][1..-1]
+        when FASTCALL
+          args = meta[ARGS][2..-1]
+        when STDCALL
+          args = meta[ARGS]
+        end
+        
+        args.map{|(_,n)| n}
+      end
+
+      def get_func_decl(nam, opts = {})
+        meta = @sigs[nam]
+        CppGen.get_func_decl(nam, meta[TYPE], meta[ARGS], CppGen::KEYWORD_CC[meta[CONVENTION]], opts)
       end
 
       def get_func_body(name)
