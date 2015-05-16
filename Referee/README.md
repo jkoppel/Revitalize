@@ -15,6 +15,8 @@ Drag the compiled plugin into the IDA "plugins" folder
 
 Referee will automatically run whenever a function is decompiled. It is recommended that you decompile the entire binary for maximum information.
 
+Referee does not do type inference;  you will still need to give types to your functions for it to find structure uses.
+
 ##Notes
 
  * If you annotate a function to remove a struct-member usage, decompiling the function again will remove the corresponding xrefs.
